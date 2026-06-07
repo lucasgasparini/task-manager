@@ -82,8 +82,9 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req as AuthenticatedRequest
+    const id = req.params['id'] as string
     const task = await prisma.task.findFirst({
-      where: { id: req.params.id, userId },
+      where: { id, userId },
     })
 
     if (!task) {
@@ -101,10 +102,11 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req as AuthenticatedRequest
+    const id = req.params['id'] as string
     const body = updateTaskSchema.parse(req.body)
 
     const existing = await prisma.task.findFirst({
-      where: { id: req.params.id, userId },
+      where: { id, userId },
     })
 
     if (!existing) {
@@ -113,7 +115,7 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
     }
 
     const task = await prisma.task.update({
-      where: { id: req.params.id },
+      where: { id },
       data: {
         ...body,
         dueDate: body.dueDate ? new Date(body.dueDate) : undefined,
@@ -130,9 +132,10 @@ router.patch('/:id', async (req: Request, res: Response, next: NextFunction) => 
 router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req as AuthenticatedRequest
+    const id = req.params['id'] as string
 
     const existing = await prisma.task.findFirst({
-      where: { id: req.params.id, userId },
+      where: { id, userId },
     })
 
     if (!existing) {
@@ -140,7 +143,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
       return
     }
 
-    await prisma.task.delete({ where: { id: req.params.id } })
+    await prisma.task.delete({ where: { id } })
     res.status(204).send()
   } catch (err) {
     next(err)

@@ -28,7 +28,7 @@ export function LoginPage() {
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ??
-        'Something went wrong'
+        'Algo deu errado'
       setError(msg)
     }
   }
@@ -39,12 +39,12 @@ export function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-sm">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          {mode === 'login' ? 'Sign in' : 'Create account'}
+          {mode === 'login' ? 'Entrar' : 'Criar conta'}
         </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
             <input
               type="email"
               required
@@ -55,7 +55,7 @@ export function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Senha</label>
             <input
               type="password"
               required
@@ -72,17 +72,17 @@ export function LoginPage() {
             disabled={isPending}
             className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
           >
-            {isPending ? '...' : mode === 'login' ? 'Sign in' : 'Register'}
+            {isPending ? '...' : mode === 'login' ? 'Entrar' : 'Cadastrar'}
           </button>
         </form>
 
         <p className="mt-4 text-sm text-center text-gray-500">
-          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
+          {mode === 'login' ? 'Não tem uma conta? ' : 'Já tem uma conta? '}
           <button
             onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError('') }}
             className="text-blue-600 hover:underline font-medium"
           >
-            {mode === 'login' ? 'Register' : 'Sign in'}
+            {mode === 'login' ? 'Cadastre-se' : 'Entrar'}
           </button>
         </p>
       </div>

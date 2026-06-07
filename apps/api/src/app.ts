@@ -8,9 +8,14 @@ import { errorHandler } from './middleware/errorHandler.js'
 export function createApp() {
   const app = express()
 
+  const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173').split(',').map(s => s.trim())
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+      origin: (origin, cb) => {
+        // Allow requests with no origin (curl, mobile apps, etc.)
+        if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+        cb(new Error(`CORS: origin ${origin} not allowed`))
+      },
       credentials: true,
     })
   )

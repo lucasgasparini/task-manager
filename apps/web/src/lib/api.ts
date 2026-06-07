@@ -1,8 +1,12 @@
 import axios from 'axios'
 import { useAuthStore } from '../store/auth.ts'
 
+const BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
+
 export const api = axios.create({
-  baseURL: '/api',
+  baseURL: BASE_URL,
   withCredentials: true, // send cookies for refresh token
 })
 
@@ -39,7 +43,7 @@ api.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const { data } = await axios.post('/api/auth/refresh', {}, { withCredentials: true })
+        const { data } = await axios.post(`${BASE_URL}/auth/refresh`, {}, { withCredentials: true })
         const newToken = data.data.accessToken
         useAuthStore.getState().setAccessToken(newToken)
         refreshQueue.forEach((cb) => cb(newToken))

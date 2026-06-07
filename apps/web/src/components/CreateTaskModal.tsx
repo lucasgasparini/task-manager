@@ -24,43 +24,43 @@ export function CreateTaskModal({ onClose }: Props) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-        <h2 className="text-lg font-semibold mb-4">New Task</h2>
+        <h2 className="text-lg font-semibold mb-4">Nova Tarefa</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
             <input
               type="text"
               required
               value={form.title}
               onChange={(e) => setForm({ ...form, title: e.target.value })}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="What needs to be done?"
+              placeholder="O que precisa ser feito?"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               rows={3}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Optional details..."
+              placeholder="Detalhes opcionais..."
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Prioridade</label>
               <select
                 value={form.priority}
                 onChange={(e) => setForm({ ...form, priority: e.target.value as Priority })}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
               >
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
+                <option value="LOW">Baixa</option>
+                <option value="MEDIUM">Média</option>
+                <option value="HIGH">Alta</option>
               </select>
             </div>
 
@@ -71,15 +71,15 @@ export function CreateTaskModal({ onClose }: Props) {
                 onChange={(e) => setForm({ ...form, status: e.target.value as TaskStatus })}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
               >
-                <option value="TODO">To Do</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="DONE">Done</option>
+                <option value="TODO">A Fazer</option>
+                <option value="IN_PROGRESS">Em Andamento</option>
+                <option value="DONE">Concluído</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Due Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Prazo</label>
             <input
               type="datetime-local"
               onChange={(e) =>
@@ -90,7 +90,7 @@ export function CreateTaskModal({ onClose }: Props) {
           </div>
 
           {createTask.isError && (
-            <p className="text-sm text-red-600">Failed to create task. Please try again.</p>
+            <p className="text-sm text-red-600">Falha ao criar tarefa. Tente novamente.</p>
           )}
 
           <div className="flex gap-3 justify-end pt-2">
@@ -99,14 +99,14 @@ export function CreateTaskModal({ onClose }: Props) {
               onClick={onClose}
               className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
             >
-              Cancel
+              Cancelar
             </button>
             <button
               type="submit"
               disabled={createTask.isPending}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
-              {createTask.isPending ? 'Creating...' : 'Create Task'}
+              {createTask.isPending ? 'Criando...' : 'Criar Tarefa'}
             </button>
           </div>
         </form>

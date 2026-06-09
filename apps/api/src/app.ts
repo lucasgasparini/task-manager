@@ -7,19 +7,26 @@ import { errorHandler } from './middleware/errorHandler.js'
 export function createApp() {
   const app = express()
 
-  // CORS middleware — echoes the request origin back so credentials work from any origin.
-  // For a production app you'd restrict this to specific origins via CORS_ORIGIN env var.
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    const origin = req.headers.origin ?? '*'
-    res.setHeader('Access-Control-Allow-Origin', origin)
+  const applyCORSHeaders = (req: Request, res: Response) => {
+    const origin = req.headers.origin
+    if (origin) {
+      res.setHeader('Access-Control-Allow-Origin', origin)
+      res.setHeader('Vary', 'Origin')
+    }
     res.setHeader('Access-Control-Allow-Credentials', 'true')
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    res.setHeader('Vary', 'Origin')
-    if (req.method === 'OPTIONS') {
-      res.status(204).end()
-      return
-    }
+  }
+
+  // Explicit preflight handler — must come before app.use() so Express routes it correctly
+  app.options('*', (req: Request, res: Response) => {
+    applyCORSHeaders(req, res)
+    res.status(204).end()
+  })
+
+  // Attach CORS headers to every non-OPTIONS response
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    applyCORSHeaders(req, res)
     next()
   })
   app.use(express.json())

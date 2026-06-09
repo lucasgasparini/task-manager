@@ -9,16 +9,18 @@ export function createApp() {
   const app = express()
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173').split(',').map(s => s.trim())
-  app.use(
-    cors({
-      origin: (origin, cb) => {
-        // Allow requests with no origin (curl, mobile apps, etc.)
-        if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
-        cb(new Error(`CORS: origin ${origin} not allowed`))
-      },
-      credentials: true,
-    })
-  )
+  const corsOptions: cors.CorsOptions = {
+    origin: (origin, cb) => {
+      // Allow requests with no origin (curl, mobile apps, etc.)
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+      cb(new Error(`CORS: origin ${origin} not allowed`))
+    },
+    credentials: true,
+  }
+
+  // Handle preflight OPTIONS requests for all routes
+  app.options('*', cors(corsOptions))
+  app.use(cors(corsOptions))
   app.use(express.json())
   app.use(cookieParser())
 

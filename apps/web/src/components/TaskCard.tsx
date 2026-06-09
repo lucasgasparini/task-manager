@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import type { Task } from '../types/task.ts'
-import { useUpdateTask, useDeleteTask } from '../hooks/useTasks.ts'
+import { useDeleteTask } from '../hooks/useTasks.ts'
 
 const PRIORITY_COLORS: Record<Task['priority'], string> = {
   LOW: 'bg-gray-100 text-gray-700',
@@ -20,7 +20,6 @@ interface Props {
 }
 
 export function TaskCard({ task }: Props) {
-  const updateTask = useUpdateTask()
   const deleteTask = useDeleteTask()
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({

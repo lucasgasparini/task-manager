@@ -7,7 +7,9 @@ import { errorHandler } from './middleware/errorHandler.js'
 export function createApp() {
   const app = express()
 
-  const applyCORSHeaders = (req: Request, res: Response) => {
+  // app.use() matches all HTTP methods (including OPTIONS) without path-to-regexp,
+  // so it never throws a PathError and reliably handles CORS preflight in Express 5.
+  app.use((req: Request, res: Response, next: NextFunction) => {
     const origin = req.headers.origin
     if (origin) {
       res.setHeader('Access-Control-Allow-Origin', origin)
@@ -16,17 +18,10 @@ export function createApp() {
     res.setHeader('Access-Control-Allow-Credentials', 'true')
     res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-  }
-
-  // Explicit preflight handler — must come before app.use() so Express routes it correctly
-  app.options('/{*path}', (req: Request, res: Response) => {
-    applyCORSHeaders(req, res)
-    res.status(204).end()
-  })
-
-  // Attach CORS headers to every non-OPTIONS response
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    applyCORSHeaders(req, res)
+    if (req.method === 'OPTIONS') {
+      res.status(204).end()
+      return
+    }
     next()
   })
   app.use(express.json())

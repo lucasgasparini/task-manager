@@ -8,18 +8,20 @@ import { errorHandler } from './middleware/errorHandler.js'
 export function createApp() {
   const app = express()
 
-  const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173').split(',').map(s => s.trim())
+  const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
+    .split(',')
+    .map(s => s.trim().replace(/\/$/, '')) // trim whitespace and trailing slash
+
   const corsOptions: cors.CorsOptions = {
     origin: (origin, cb) => {
-      // Allow requests with no origin (curl, mobile apps, etc.)
+      // Allow requests with no origin (curl, mobile apps, server-to-server)
       if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
-      cb(new Error(`CORS: origin ${origin} not allowed`))
+      cb(null, false) // reject cleanly — don't throw, which strips CORS headers
     },
     credentials: true,
   }
 
-  // Handle preflight OPTIONS requests for all routes
-  app.options('{*path}', cors(corsOptions))
+  // cors middleware handles OPTIONS preflight automatically (preflightContinue: false by default)
   app.use(cors(corsOptions))
   app.use(express.json())
   app.use(cookieParser())

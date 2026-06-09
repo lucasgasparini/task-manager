@@ -1,5 +1,4 @@
-import express from 'express'
-import cors from 'cors'
+import express, { Request, Response, NextFunction } from 'express'
 import cookieParser from 'cookie-parser'
 import authRouter from './routes/auth.js'
 import tasksRouter from './routes/tasks.js'
@@ -10,19 +9,24 @@ export function createApp() {
 
   const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
     .split(',')
-    .map(s => s.trim().replace(/\/$/, '')) // trim whitespace and trailing slash
+    .map(s => s.trim().replace(/\/$/, ''))
 
-  const corsOptions: cors.CorsOptions = {
-    origin: (origin, cb) => {
-      // Allow requests with no origin (curl, mobile apps, server-to-server)
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
-      cb(null, false) // reject cleanly — don't throw, which strips CORS headers
-    },
-    credentials: true,
-  }
-
-  // cors middleware handles OPTIONS preflight automatically (preflightContinue: false by default)
-  app.use(cors(corsOptions))
+  // Manual CORS middleware — explicit and framework-agnostic
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    const origin = req.headers.origin
+    if (!origin || allowedOrigins.includes(origin)) {
+      res.setHeader('Access-Control-Allow-Origin', origin ?? '*')
+      res.setHeader('Access-Control-Allow-Credentials', 'true')
+      res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+      res.setHeader('Vary', 'Origin')
+    }
+    if (req.method === 'OPTIONS') {
+      res.status(204).end()
+      return
+    }
+    next()
+  })
   app.use(express.json())
   app.use(cookieParser())
 

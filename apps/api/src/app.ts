@@ -19,7 +19,7 @@ export function createApp() {
   }
 
   // Explicit preflight handler — must come before app.use() so Express routes it correctly
-  app.options('{*path}', (req: Request, res: Response) => {
+  app.options('/{*path}', (req: Request, res: Response) => {
     applyCORSHeaders(req, res)
     res.status(204).end()
   })

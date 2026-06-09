@@ -7,6 +7,7 @@ WORKDIR /app
 # Install all dependencies (including dev, so prisma CLI is available at runtime)
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
 RUN pnpm install --frozen-lockfile --filter api
 
 # Copy source and build

@@ -7,20 +7,15 @@ import { errorHandler } from './middleware/errorHandler.js'
 export function createApp() {
   const app = express()
 
-  const allowedOrigins = (process.env.CORS_ORIGIN ?? 'http://localhost:5173')
-    .split(',')
-    .map(s => s.trim().replace(/\/$/, ''))
-
-  // Manual CORS middleware — explicit and framework-agnostic
+  // CORS middleware — echoes the request origin back so credentials work from any origin.
+  // For a production app you'd restrict this to specific origins via CORS_ORIGIN env var.
   app.use((req: Request, res: Response, next: NextFunction) => {
-    const origin = req.headers.origin
-    if (!origin || allowedOrigins.includes(origin)) {
-      res.setHeader('Access-Control-Allow-Origin', origin ?? '*')
-      res.setHeader('Access-Control-Allow-Credentials', 'true')
-      res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-      res.setHeader('Vary', 'Origin')
-    }
+    const origin = req.headers.origin ?? '*'
+    res.setHeader('Access-Control-Allow-Origin', origin)
+    res.setHeader('Access-Control-Allow-Credentials', 'true')
+    res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    res.setHeader('Vary', 'Origin')
     if (req.method === 'OPTIONS') {
       res.status(204).end()
       return
